@@ -1,4 +1,4 @@
- ==========================================================
+==========================================================
    PROJECT : E-Commerce Order Management System
    DATABASE: MySQL
  ========================================================== 
@@ -268,8 +268,8 @@ LIMIT 5;
 |          5 | Laptop      |           1 | 60000.00 |             10 | 2024-04-01 |
 |          1 | Smartphone  |           1 | 25000.00 |             50 | 2024-01-10 |
 |          6 | Smart Watch |           1 |  5000.00 |             30 | 2026-10-13 |
-|          7 | Smart Watch |           1 |  5000.00 |             30 | 2026-10-13 |
 |          2 | Headphones  |           1 |  2000.00 |              0 | 2024-02-15 |
+|          3 | T-Shirt     |           2 |   500.00 |            198 | 2024-03-01 |
 +------------+-------------+-------------+----------+----------------+------------+
 5 rows in set (0.051 sec)
 
@@ -337,9 +337,8 @@ WHERE NOT stock_quantity = 0;
 |          4 | Novel Book  |           3 |   300.00 |            100 | 2024-03-10 |
 |          5 | Laptop      |           1 | 60000.00 |             10 | 2024-04-01 |
 |          6 | Smart Watch |           1 |  5000.00 |             30 | 2026-10-13 |
-|          7 | Smart Watch |           1 |  5000.00 |             30 | 2026-10-13 |
 +------------+-------------+-------------+----------+----------------+------------+
-6 rows in set (0.049 sec)
+5 rows in set (0.049 sec)
 
 
 
@@ -387,12 +386,11 @@ ORDER BY price DESC;
 |          5 | Laptop      |           1 | 60000.00 |             10 | 2024-04-01 |
 |          1 | Smartphone  |           1 | 25000.00 |             50 | 2024-01-10 |
 |          6 | Smart Watch |           1 |  5000.00 |             30 | 2026-10-13 |
-|          7 | Smart Watch |           1 |  5000.00 |             30 | 2026-10-13 |
 |          2 | Headphones  |           1 |  2000.00 |              0 | 2024-02-15 |
 |          3 | T-Shirt     |           2 |   500.00 |            198 | 2024-03-01 |
 |          4 | Novel Book  |           3 |   300.00 |            100 | 2024-03-10 |
 +------------+-------------+-------------+----------+----------------+------------+
-7 rows in set (0.044 sec)
+6 rows in set (0.044 sec)
 
 
 
@@ -577,11 +575,10 @@ INNER JOIN Categories c ON p.category_id = c.category_id;
 |          2 | Headphones  | Electronics   |
 |          5 | Laptop      | Electronics   |
 |          6 | Smart Watch | Electronics   |
-|          7 | Smart Watch | Electronics   |
 |          3 | T-Shirt     | Clothing      |
 |          4 | Novel Book  | Books         |
 +------------+-------------+---------------+
-7 rows in set (0.037 sec)
+6 rows in set (0.037 sec)
 
 
 
@@ -681,338 +678,4 @@ WHERE customer_id IN (
 | order_id | customer_id | order_date | total_amount | status  |
 +----------+-------------+------------+--------------+---------+
 |        3 |           2 | 2026-09-10 |     60000.00 | Shipped |
-|        7 |           4 | 2026-10-13 |      1000.00 | Pending |
-+----------+-------------+------------+--------------+---------+
-2 rows in set (0.007 sec)
-
-
-
-
- ===== QUERY 24 : CUSTOMER WHO SPENT THE MOST =====
-   Identify the customer who has spent the most 
-
-SELECT name
-FROM Customers
-WHERE customer_id = (
-  SELECT customer_id
-  FROM Orders
-  GROUP BY customer_id
-  ORDER BY SUM(total_amount) DESC
-  LIMIT 1
-);
-
- OUTPUT:
-
-+-------------+
-| name        |
-+-------------+
-| Priya Patel |
-+-------------+
-1 row in set (0.077 sec)
-
-
-
-
- ===== QUERY 25 : PRODUCTS NEVER ORDERED =====
-   Get products that have never been ordered 
-
-SELECT *
-FROM Products
-WHERE product_id NOT IN (
-  SELECT product_id FROM Order_Items
-);
-
- OUTPUT:
-
-+------------+-------------+-------------+---------+----------------+------------+
-| product_id | name        | category_id | price   | stock_quantity | added_date |
-+------------+-------------+-------------+---------+----------------+------------+
-|          6 | Smart Watch |           1 | 5000.00 |             30 | 2026-10-13 |
-|          7 | Smart Watch |           1 | 5000.00 |             30 | 2026-10-13 |
-+------------+-------------+-------------+---------+----------------+------------+
-2 rows in set (0.063 sec)
-
-
-
-
- ===== TASK 9 : DATE AND TIME FUNCTIONS ===== 
-
-
- ===== QUERY 26 : ORDERS PER MONTH =====
-   Extract the month from order_date to count orders per month 
-
-SELECT MONTH(order_date) AS order_month,
-       COUNT(order_id)   AS total_orders
-FROM Orders
-GROUP BY MONTH(order_date);
-
- OUTPUT:
-
-+-------------+--------------+
-| order_month | total_orders |
-+-------------+--------------+
-|           8 |            1 |
-|           9 |            3 |
-|          10 |            2 |
-+-------------+--------------+
-3 rows in set (0.049 sec)
-
-
-
-
- ===== QUERY 27 : DELIVERY TIME =====
-   Calculate delivery time in days using shipping_date and delivery_date 
-
-SELECT order_id, shipping_date, delivery_date,
-       DATEDIFF(delivery_date, shipping_date) AS delivery_days
-FROM Shipping
-WHERE delivery_date IS NOT NULL;
-
- OUTPUT:
-
-+----------+---------------+---------------+---------------+
-| order_id | shipping_date | delivery_date | delivery_days |
-+----------+---------------+---------------+---------------+
-|        1 | 2026-08-02    | 2026-08-06    |             4 |
-+----------+---------------+---------------+---------------+
-1 row in set (0.054 sec)
-
-
-
-
- ===== QUERY 28 : DATE FORMAT =====
-   Format order_date as DD-MM-YYYY 
-
-SELECT order_id, DATE_FORMAT(order_date, '%d-%m-%Y') AS formatted_date
-FROM Orders;
-
- OUTPUT:
-
-+----------+----------------+
-| order_id | formatted_date |
-+----------+----------------+
-|        1 | 01-08-2026     |
-|        2 | 05-09-2026     |
-|        3 | 10-09-2026     |
-|        5 | 20-09-2026     |
-|        6 | 01-10-2026     |
-|        7 | 13-10-2026     |
-+----------+----------------+
-6 rows in set (0.025 sec)
-
-
-
-
- ===== TASK 10 : STRING FUNCTIONS ===== 
-
-
- ===== QUERY 29 : UPPERCASE PRODUCT NAMES =====
-   Convert all product names to uppercase 
-
-SELECT product_id, UPPER(name) AS product_name
-FROM Products;
-
- OUTPUT:
-
-+------------+--------------+
-| product_id | product_name |
-+------------+--------------+
-|          1 | SMARTPHONE   |
-|          2 | HEADPHONES   |
-|          3 | T-SHIRT      |
-|          4 | NOVEL BOOK   |
-|          5 | LAPTOP       |
-|          6 | SMART WATCH  |
-|          7 | SMART WATCH  |
-+------------+--------------+
-7 rows in set (0.052 sec)
-
-
-
-
- ===== QUERY 30 : TRIM CUSTOMER NAMES =====
-   Trim whitespace from customer names 
-
-SELECT customer_id, TRIM(name) AS customer_name
-FROM Customers;
-
- OUTPUT:
-
-+-------------+---------------+
-| customer_id | customer_name |
-+-------------+---------------+
-|           1 | Amit Shah     |
-|           2 | Priya Patel   |
-|           3 | Rahul Mehta   |
-|           4 | Neha Joshi    |
-|           5 | Karan Desai   |
-+-------------+---------------+
-5 rows in set (0.053 sec)
-
-
-
-
- ===== QUERY 31 : REPLACE MISSING EMAIL =====
-   Replace missing email values with "Not Provided" 
-
-SELECT customer_id, name,
-       IFNULL(email, 'Not Provided') AS email
-FROM Customers;
-
- OUTPUT:
-
-+-------------+--------------+----------------+
-| customer_id | name         | email          |
-+-------------+--------------+----------------+
-|           1 |   Amit Shah  | amit@mail.com  |
-|           2 | Priya Patel  | Not Provided   |
-|           3 | Rahul Mehta  | rahul@mail.com |
-|           4 | Neha Joshi   | neha@mail.com  |
-|           5 | Karan Desai  | karan@mail.com |
-+-------------+--------------+----------------+
-5 rows in set (0.023 sec)
-
-
-
-
- ===== TASK 11 : WINDOW FUNCTIONS ===== 
-
-
- ===== QUERY 32 : RANK CUSTOMERS BY SPENDING =====
-   Rank customers based on their total spending 
-
-SELECT customer_id,
-       SUM(total_amount) AS total_spending,
-       RANK() OVER (ORDER BY SUM(total_amount) DESC) AS spending_rank
-FROM Orders
-GROUP BY customer_id;
-
- OUTPUT:
-
-+-------------+----------------+---------------+
-| customer_id | total_spending | spending_rank |
-+-------------+----------------+---------------+
-|           2 |       60000.00 |             1 |
-|           1 |       28300.00 |             2 |
-|           4 |        1000.00 |             3 |
-+-------------+----------------+---------------+
-3 rows in set (0.095 sec)
-
-
-
-
- ===== QUERY 33 : CUMULATIVE REVENUE PER MONTH =====
-   Show the cumulative total revenue per month 
-
-SELECT DATE_FORMAT(order_date, '%Y-%m') AS order_month,
-       SUM(total_amount) AS monthly_revenue,
-       SUM(SUM(total_amount)) OVER (
-         ORDER BY DATE_FORMAT(order_date, '%Y-%m')
-       ) AS cumulative_revenue
-FROM Orders
-GROUP BY DATE_FORMAT(order_date, '%Y-%m');
-
- OUTPUT:
-
-+-------------+-----------------+--------------------+
-| order_month | monthly_revenue | cumulative_revenue |
-+-------------+-----------------+--------------------+
-| 2026-08     |        25500.00 |           25500.00 |
-| 2026-09     |        62300.00 |           87800.00 |
-| 2026-10     |         1500.00 |           89300.00 |
-+-------------+-----------------+--------------------+
-3 rows in set (0.094 sec)
-
-
-
-
- ===== QUERY 34 : RUNNING TOTAL OF ORDERS =====
-   Display the running total of orders placed 
-
-SELECT order_id, order_date,
-       COUNT(order_id) OVER (ORDER BY order_date, order_id) AS running_total_orders
-FROM Orders;
-
- OUTPUT:
-
-+----------+------------+----------------------+
-| order_id | order_date | running_total_orders |
-+----------+------------+----------------------+
-|        1 | 2026-08-01 |                    1 |
-|        2 | 2026-09-05 |                    2 |
-|        3 | 2026-09-10 |                    3 |
-|        5 | 2026-09-20 |                    4 |
-|        6 | 2026-10-01 |                    5 |
-|        7 | 2026-10-13 |                    6 |
-+----------+------------+----------------------+
-6 rows in set (0.025 sec)
-
-
-
-
- ===== TASK 12 : CASE EXPRESSIONS ===== 
-
-
- ===== QUERY 35 : LOYALTY STATUS =====
-   Gold = above 50,000 | Silver = 20,000 to 50,000 | Bronze = others 
-
-SELECT c.customer_id, c.name,
-       IFNULL(SUM(o.total_amount), 0) AS total_spent,
-  CASE
-    WHEN IFNULL(SUM(o.total_amount), 0) > 50000 THEN 'Gold'
-    WHEN IFNULL(SUM(o.total_amount), 0) BETWEEN 20000 AND 50000 THEN 'Silver'
-    ELSE 'Bronze'
-  END AS Loyalty_Status
-FROM Customers c
-LEFT JOIN Orders o ON c.customer_id = o.customer_id
-GROUP BY c.customer_id, c.name;
-
- OUTPUT:
-
-+-------------+--------------+-------------+----------------+
-| customer_id | name         | total_spent | Loyalty_Status |
-+-------------+--------------+-------------+----------------+
-|           1 |   Amit Shah  |    28300.00 | Silver         |
-|           2 | Priya Patel  |    60000.00 | Gold           |
-|           3 | Rahul Mehta  |        0.00 | Bronze         |
-|           4 | Neha Joshi   |     1000.00 | Bronze         |
-|           5 | Karan Desai  |        0.00 | Bronze         |
-+-------------+--------------+-------------+----------------+
-5 rows in set (0.076 sec)
-
-
-
-
-
- ===== QUERY 36 : PRODUCT CATEGORY BY UNITS SOLD =====
-   Best Seller = more than 500 | Popular = 200 to 500 | Regular = others 
-
-SELECT p.product_id, p.name,
-       IFNULL(SUM(oi.quantity), 0) AS units_sold,
-  CASE
-    WHEN IFNULL(SUM(oi.quantity), 0) > 500 THEN 'Best Seller'
-    WHEN IFNULL(SUM(oi.quantity), 0) BETWEEN 200 AND 500 THEN 'Popular'
-    ELSE 'Regular'
-  END AS Product_Category
-FROM Products p
-LEFT JOIN Order_Items oi ON p.product_id = oi.product_id
-GROUP BY p.product_id, p.name;
-
- OUTPUT:
-
-+------------+-------------+------------+------------------+
-| product_id | name        | units_sold | Product_Category |
-+------------+-------------+------------+------------------+
-|          1 | Smartphone  |          1 | Regular          |
-|          2 | Headphones  |          1 | Regular          |
-|          3 | T-Shirt     |          4 | Regular          |
-|          4 | Novel Book  |          1 | Regular          |
-|          5 | Laptop      |          1 | Regular          |
-|          6 | Smart Watch |          0 | Regular          |
-|          7 | Smart Watch |          0 | Regular          |
-+------------+-------------+------------+------------------+
-7 rows in set (0.065 sec)
-
-
-
- ==================== END OF PROJECT ==================== 
+|        7 |           4 | 2026-10-13 |      1000.00 | Pen

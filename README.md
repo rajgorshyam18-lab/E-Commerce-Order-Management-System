@@ -222,7 +222,7 @@ This project was created for learning purposes, based on the E-Commerce Order Ma
 | | |
 |---|---|
 | **Project** | E-Commerce Order Management System |
-| **Author** | Your Name |
+| **Author** | Shyam Gor |
 | **Language** | SQL |
 | **Database** | MySQL |
 | **Total Tables** | 7 |
